@@ -1,0 +1,37 @@
+
+#### docker-compose.yml
+```yaml
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=us-east-1
+      - S3_BUCKET_NAME=test-bucket
+      - DOWNLOADS_TABLE_NAME=test-table
+      - JWT_SECRET_KEY=test-secret
+    volumes:
+      - ./src:/app/src
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: pytest tests/
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=us-east-1
+      - S3_BUCKET_NAME=test-bucket
+      - DOWNLOADS_TABLE_NAME=test-table
+      - JWT_SECRET_KEY=test-secret
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
