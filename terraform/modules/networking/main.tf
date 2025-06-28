@@ -1,4 +1,4 @@
-# API Gateway
+# API Gateway REST API
 resource "aws_api_gateway_rest_api" "main" {
   name        = "${var.project_name}-${var.environment}-api"
   description = "YouTube Downloader API"
@@ -7,7 +7,6 @@ resource "aws_api_gateway_rest_api" "main" {
     types = ["REGIONAL"]
   }
   
-  # Binary media types for file uploads/downloads
   binary_media_types = [
     "application/octet-stream",
     "video/*",
@@ -30,6 +29,10 @@ resource "aws_api_gateway_method" "proxy" {
   resource_id   = aws_api_gateway_resource.proxy.id
   http_method   = "ANY"
   authorization = "NONE"
+  
+  request_parameters = {
+    "method.request.path.proxy" = true
+  }
 }
 
 # API Gateway method (root)
@@ -48,7 +51,11 @@ resource "aws_api_gateway_integration" "proxy" {
 
   integration_http_method = "POST"
   type                   = "AWS_PROXY"
-  uri                    = var.lambda_function_arn
+  uri                    = var.lambda_function_invoke_arn
+  
+  request_parameters = {
+    "integration.request.path.proxy" = "method.request.path.proxy"
+  }
 }
 
 # API Gateway integration (root)
@@ -59,7 +66,7 @@ resource "aws_api_gateway_integration" "root" {
 
   integration_http_method = "POST"
   type                   = "AWS_PROXY"
-  uri                    = var.lambda_function_arn
+  uri                    = var.lambda_function_invoke_arn
 }
 
 # Lambda permission for API Gateway
@@ -100,3 +107,32 @@ resource "aws_api_gateway_deployment" "main" {
 resource "aws_api_gateway_stage" "main" {
   deployment_id = aws_api_gateway_deployment.main.id
   rest_api_id   = aws_api_gateway_rest_api.main.id
+  stage_name    = var.environment
+  
+  # access_log_settings {
+  #   destination_arn = aws_cloudwatch_log_group.api_gateway.arn
+  #   format          = jsonencode({
+  #     requestId     = "$context.requestId",
+  #     ip            = "$context.identity.sourceIp",
+  #     requestTime   = "$context.requestTime",
+  #     httpMethod    = "$context.httpMethod",
+  #     routeKey      = "$context.routeKey",
+  #     status        = "$context.status",
+  #     protocol      = "$context.protocol",
+  #     responseLength = "$context.responseLength"
+  #   })
+  # }
+
+  tags = var.tags
+}
+
+# CloudWatch Log Group for API Gateway access logs
+resource "aws_cloudwatch_log_group" "api_gateway" {
+  name              = "/aws/apigateway/${var.project_name}-${var.environment}"
+  retention_in_days = var.log_retention_days
+  tags              = var.tags
+}
+
+# Data sources for current AWS account and region
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}

@@ -1,10 +1,9 @@
 terraform {
   backend "s3" {
-    # These values will be provided via backend configuration
-    # bucket         = "your-terraform-state-bucket"
-    # key            = "youtube-downloader/terraform.tfstate"
-    # region         = "us-east-1"
-    # dynamodb_table = "terraform-state-lock"
-    # encrypt        = true
+    bucket         = "youtube-downloaderz"    # Your actual bucket name
+    key            = "terraform.tfstate"      # Better path convention
+    region         = "us-east-2"              # Must match bucket's region
+    encrypt        = true
+    use_lockfile   = true                     # Replaces dynamodb_table
   }
 }

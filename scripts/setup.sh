@@ -5,25 +5,28 @@ set -e
 
 echo "Setting up project..."
 
+# Get the root directory of the project
+ROOT_DIR=$(dirname $(dirname $(realpath $0)))
+
 # Install Python dependencies
 echo "Installing Python dependencies..."
 python -m pip install --upgrade pip
-pip install -r src/requirements.txt
+pip install -r $ROOT_DIR/src/requirements.txt
 
 # Install Terraform
 echo "Installing Terraform..."
 TF_VERSION=1.5.0
-wget https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
-unzip terraform_${TF_VERSION}_linux_amd64.zip
-sudo mv terraform /usr/local/bin/
-rm terraform_${TF_VERSION}_linux_amd64.zip
+wget https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip -O /tmp/terraform.zip
+unzip /tmp/terraform.zip -d /tmp
+sudo mv /tmp/terraform /usr/local/bin/
+rm /tmp/terraform.zip
 
 # Install AWS CLI
 echo "Installing AWS CLI..."
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-rm -rf aws awscliv2.zip
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
+unzip /tmp/awscliv2.zip -d /tmp
+sudo /tmp/aws/install
+rm -rf /tmp/aws /tmp/awscliv2.zip
 
 # Install yt-dlp
 echo "Installing yt-dlp..."

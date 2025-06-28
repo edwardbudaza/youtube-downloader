@@ -15,7 +15,7 @@ variable "s3_lifecycle_days" {
 }
 
 variable "dynamodb_billing_mode" {
-  description = "DynamoDB billing mode"
+  description = "DynamoDB billing mode (PROVISIONED or PAY_PER_REQUEST)"
   type        = string
   default     = "PAY_PER_REQUEST"
 }

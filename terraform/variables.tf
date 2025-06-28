@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "environment" {
   description = "Environment name"
   type        = string
-  default     = "prod"
+  default     = "dev"
   
   validation {
     condition     = contains(["dev", "staging", "prod"], var.environment)
@@ -48,12 +48,6 @@ variable "lambda_memory_size" {
   }
 }
 
-variable "enable_api_logging" {
-  description = "Enable API Gateway logging"
-  type        = bool
-  default     = true
-}
-
 variable "log_retention_days" {
   description = "CloudWatch log retention in days"
   type        = number
@@ -80,4 +74,10 @@ variable "dynamodb_billing_mode" {
     condition     = contains(["PROVISIONED", "PAY_PER_REQUEST"], var.dynamodb_billing_mode)
     error_message = "DynamoDB billing mode must be PROVISIONED or PAY_PER_REQUEST."
   }
+}
+
+variable "enable_api_logging" {
+  description = "Enable API Gateway logging"
+  type        = bool
+  default     = true
 }

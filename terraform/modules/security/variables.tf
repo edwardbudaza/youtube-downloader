@@ -9,17 +9,23 @@ variable "environment" {
 }
 
 variable "s3_bucket_arn" {
-  description = "S3 bucket ARN"
+  description = "ARN of the S3 bucket"
   type        = string
 }
 
 variable "downloads_table_arn" {
-  description = "DynamoDB downloads table ARN"
+  description = "ARN of the DynamoDB downloads table"
   type        = string
 }
 
 variable "rate_limits_table_arn" {
-  description = "DynamoDB rate limits table ARN"
+  description = "ARN of the DynamoDB rate limits table"
+  type        = string
+  default     = ""
+}
+
+variable "kms_key_arn" {
+  description = "ARN of the KMS key for encryption"
   type        = string
   default     = ""
 }

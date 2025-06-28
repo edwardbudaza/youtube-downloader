@@ -13,9 +13,15 @@ variable "lambda_function_name" {
   type        = string
 }
 
-variable "lambda_function_arn" {
-  description = "Lambda function ARN"
+variable "lambda_function_invoke_arn" {
+  description = "Lambda function invoke ARN"
   type        = string
+}
+
+variable "log_retention_days" {
+  description = "CloudWatch log retention in days"
+  type        = number
+  default     = 14
 }
 
 variable "tags" {
